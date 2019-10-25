@@ -60,23 +60,30 @@ func TestGroup_Run(t *testing.T) {
 func TestGroup_Wait(t *testing.T) {
 	gp := NewGroup()
 	res1 := gp.AddSync(func(ctx context.Context) (val interface{}, err error) {
-		time.Sleep(2 * time.Second)
-		val = 100
-		err = nil
+		time.Sleep(1 * time.Second)
+		val = nil
+		err = errors.New("发生错误1")
 		return
 	})
 
 	res2 := gp.AddSync(func(ctx context.Context) (val interface{}, err error) {
-		time.Sleep(3 * time.Second)
+		time.Sleep(2 * time.Second)
 		val = 200
 		err = nil
 		return
 	})
 
 	res3 := gp.AddSync(func(ctx context.Context) (val interface{}, err error) {
+		time.Sleep(3 * time.Second)
+		val = 300
+		err = nil
+		return
+	})
+
+	res5 := gp.AddSync(func(ctx context.Context) (val interface{}, err error) {
 		time.Sleep(5 * time.Second)
 		val = nil
-		err = errors.New("发生错误")
+		err = errors.New("发生错误5")
 		return
 	})
 
@@ -88,4 +95,5 @@ func TestGroup_Wait(t *testing.T) {
 	fmt.Println(res1.Val(), res1.Err())
 	fmt.Println(res2.Val(), res2.Err())
 	fmt.Println(res3.Val(), res3.Err())
+	fmt.Println(res5.Val(), res5.Err())
 }
