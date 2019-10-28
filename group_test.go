@@ -119,7 +119,7 @@ func TestGroup_Wait2(t *testing.T) {
 			i = params[0]
 			e = nil
 			return
-		}, item) // key, item
+		}, item)
 	}
 
 	// 启动同步协程任务
@@ -127,7 +127,11 @@ func TestGroup_Wait2(t *testing.T) {
 		log.Println(err)
 	}
 
-	for val := range s {
-		log.Println(val)
+	// 输出
+	for key, item := range s {
+		if val, ok := item.(*Result); ok {
+			log.Println(key, val.Val())
+		}
+
 	}
 }
