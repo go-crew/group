@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 	"testing"
 	"time"
 )
@@ -59,28 +60,28 @@ func TestGroup_Run(t *testing.T) {
 // 同步协程版
 func TestGroup_Wait(t *testing.T) {
 	gp := NewGroup()
-	res1 := gp.AddSync(func(ctx context.Context) (val interface{}, err error) {
+	res1 := gp.AddSync(func(ctx context.Context, params ...interface{}) (val interface{}, err error) {
 		time.Sleep(1 * time.Second)
 		val = nil
 		err = errors.New("发生错误1")
 		return
 	})
 
-	res2 := gp.AddSync(func(ctx context.Context) (val interface{}, err error) {
+	res2 := gp.AddSync(func(ctx context.Context, params ...interface{}) (val interface{}, err error) {
 		time.Sleep(2 * time.Second)
 		val = 200
 		err = nil
 		return
 	})
 
-	res3 := gp.AddSync(func(ctx context.Context) (val interface{}, err error) {
+	res3 := gp.AddSync(func(ctx context.Context, params ...interface{}) (val interface{}, err error) {
 		time.Sleep(3 * time.Second)
 		val = 300
 		err = nil
 		return
 	})
 
-	res5 := gp.AddSync(func(ctx context.Context) (val interface{}, err error) {
+	res5 := gp.AddSync(func(ctx context.Context, params ...interface{}) (val interface{}, err error) {
 		time.Sleep(5 * time.Second)
 		val = nil
 		err = errors.New("发生错误5")
@@ -96,4 +97,28 @@ func TestGroup_Wait(t *testing.T) {
 	fmt.Println(res2.Val(), res2.Err())
 	fmt.Println(res3.Val(), res3.Err())
 	fmt.Println(res5.Val(), res5.Err())
+}
+
+// 同步传递参数
+func TestGroup_Wait2(t *testing.T) {
+	m := make(map[int]string, 10)
+	for i := 0; i < 10; i++ {
+		m[i] = "string-" + strconv.Itoa(i)
+	}
+
+	var res *Result
+	gp := NewGroup()
+	for key, item := range m {
+		res = gp.AddSync(func(ctx context.Context, params ...interface{}) (val interface{}, err error) {
+			val = params[0]
+			err = nil
+			return
+		}, item, key)
+	}
+
+	if err := gp.Run(); nil != err {
+		fmt.Println(err)
+	}
+
+	fmt.Println(res)
 }

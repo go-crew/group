@@ -24,11 +24,10 @@ type Group struct {
 type AddContext func(context.Context) error
 
 // Go程带数据返回的执行环境
-type AddResultContext func(context.Context) (interface{}, error)
+type AddResultContext func(context.Context, ...interface{}) (interface{}, error)
 
 // Go程停止后的执行环境回调
 type AddInterrupt func(context.CancelFunc, error)
-
 
 // 执行的类型
 type Status int
@@ -49,7 +48,6 @@ func NewGroup() *Group {
 	}
 }
 
-
 // 异步执行Go程，一个Go程终止，所有Go程连带一起终止
 func (g *Group) Run() (err error) {
 	if g.status == Async {
@@ -64,6 +62,11 @@ func (g *Group) Status() Status {
 	return g.status
 }
 
+// 获取Context对象
+func (g *Group) Context() context.Context {
+	return g.Context()
+}
+
 // 设置
 func (g *Group) setStatus(status Status) {
 	if g.status == None {
@@ -74,5 +77,3 @@ func (g *Group) setStatus(status Status) {
 		panic("Must use the same type of add method")
 	}
 }
-
-

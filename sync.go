@@ -4,6 +4,7 @@ package group
 type syncActor struct {
 	*Result
 	execute AddResultContext
+	Params  []interface{}
 }
 
 func (a syncActor) result(val interface{}, err error) {
@@ -12,10 +13,10 @@ func (a syncActor) result(val interface{}, err error) {
 }
 
 // 添加同步有返回值的操作
-func (g *Group) AddSync(execute AddResultContext) (res *Result) {
+func (g *Group) AddSync(execute AddResultContext, params ...interface{}) (res *Result) {
 	g.setStatus(Sync)
 	res = new(Result)
-	g.actors = append(g.actors, &syncActor{res, execute})
+	g.actors = append(g.actors, &syncActor{res, execute, params})
 
 	return res
 }
@@ -33,7 +34,7 @@ func (g *Group) sync() (err error) {
 		go func(a actor) {
 			defer g.wg.Done()
 			if act, ok := a.(*syncActor); ok {
-				val, err := act.execute(g.ctx)
+				val, err := act.execute(g.ctx, act.Params)
 				act.result(val, err)
 				errCh <- err
 			}
