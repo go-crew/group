@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"strconv"
 	"testing"
 	"time"
@@ -101,24 +102,32 @@ func TestGroup_Wait(t *testing.T) {
 
 // 同步传递参数
 func TestGroup_Wait2(t *testing.T) {
-	m := make(map[int]string, 10)
-	for i := 0; i < 10; i++ {
-		m[i] = "string-" + strconv.Itoa(i)
-	}
-
-	var res *Result
 	gp := NewGroup()
+	// 设置context的值，让所有同步协程共享
+	gp.SetContext("key", "value")
+	s := make([]interface{}, 10)
+	m := make(map[int]string, 10)
+	for i:= 0; i<10; i++ {
+		m[i] = "str" + strconv.Itoa(i)
+	}
+
 	for key, item := range m {
-		res = gp.AddSync(func(ctx context.Context, params ...interface{}) (val interface{}, err error) {
-			val = params[0]
-			err = nil
+		// 可以传入参数
+		s[key] = gp.AddSync(func(ctx context.Context, params ...interface{}) (i interface{}, e error) {
+			// 所有协程中都可以获取ctx设置的值
+			log.Println(ctx.Value("key"))
+			i = params[0]
+			e = nil
 			return
-		}, item, key)
+		}, item) // key, item
 	}
 
-	if err := gp.Run(); nil != err {
-		fmt.Println(err)
+	// 启动同步协程任务
+	if err := gp.Run(); err != nil {
+		log.Println(err)
 	}
 
-	fmt.Println(res)
+	for val := range s {
+		log.Println(val)
+	}
 }

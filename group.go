@@ -62,10 +62,12 @@ func (g *Group) Status() Status {
 	return g.status
 }
 
-// 获取Context对象
-func (g *Group) Context() context.Context {
-	return g.Context()
+// 给Context传递参数
+func (g *Group) SetContext(key interface{}, value interface{}) {
+	g.ctx = context.WithValue(g.ctx, key, value)
 }
+
+
 
 // 设置
 func (g *Group) setStatus(status Status) {

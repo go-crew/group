@@ -14,9 +14,15 @@ func (a syncActor) result(val interface{}, err error) {
 
 // 添加同步有返回值的操作
 func (g *Group) AddSync(execute AddResultContext, params ...interface{}) (res *Result) {
+	var sc []interface{}
 	g.setStatus(Sync)
 	res = new(Result)
-	g.actors = append(g.actors, &syncActor{res, execute, params})
+	if nil != params {
+		sc = make([]interface{}, len(params))
+		copy(sc, params)
+	}
+
+	g.actors = append(g.actors, &syncActor{res, execute, sc})
 
 	return res
 }
@@ -34,7 +40,7 @@ func (g *Group) sync() (err error) {
 		go func(a actor) {
 			defer g.wg.Done()
 			if act, ok := a.(*syncActor); ok {
-				val, err := act.execute(g.ctx, act.Params)
+				val, err := act.execute(g.ctx, act.Params...)
 				act.result(val, err)
 				errCh <- err
 			}
