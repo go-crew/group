@@ -19,7 +19,7 @@ type async struct {
 	length int
 }
 
-// 创建分组对象
+// 创建分组对象1
 func NewGroup() *async {
 	return &async{}
 }
