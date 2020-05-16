@@ -5,9 +5,6 @@ import (
 	"log"
 )
 
-type TaskGroup interface {
-}
-
 // 处理group触发的panic，并打印
 func CatchPanic(errInfo interface{}) (err error) {
 	switch errInfo.(type) {

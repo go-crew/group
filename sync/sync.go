@@ -15,7 +15,7 @@ type (
 )
 
 // 同步业务对象
-type sync struct {
+type Sync struct {
 	tags   []Tag
 	actors []*actor
 	length int
@@ -24,12 +24,12 @@ type sync struct {
 const tagErrMsg = "tag %s exists"
 
 // 创建分组对象
-func NewGroup() *sync {
-	return &sync{}
+func NewGroup() *Sync {
+	return &Sync{}
 }
 
 // 添加方法
-func (s *sync) Add(tag Tag, exec Execute, params ...interface{}) error {
+func (s *Sync) Add(tag Tag, exec Execute, params ...interface{}) error {
 	if exists(s.tags, tag) {
 		errMsg := fmt.Sprintf(tagErrMsg, tag)
 		return errors.New(errMsg)
@@ -51,7 +51,7 @@ func (s *sync) Add(tag Tag, exec Execute, params ...interface{}) error {
 }
 
 // 运行
-func (s *sync) Run(ctx context.Context) (mTask map[Tag]*TaskResult) {
+func (s *Sync) Run(ctx context.Context) (mTask map[Tag]*TaskResult) {
 	l := len(s.actors)
 	if 0 == l {
 		return

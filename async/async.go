@@ -14,18 +14,18 @@ type (
 )
 
 // 同步业务对象
-type async struct {
+type Async struct {
 	actors []*actor
 	length int
 }
 
 // 创建分组对象1
-func NewGroup() *async {
-	return &async{}
+func NewGroup() *Async {
+	return &Async{}
 }
 
 // 添加方法
-func (a *async) Add(exec Execute, inter Interrupt, params ...interface{}) {
+func (a *Async) Add(exec Execute, inter Interrupt, params ...interface{}) {
 	actor := &actor{
 		params: params,
 		exec:   exec,
@@ -38,7 +38,7 @@ func (a *async) Add(exec Execute, inter Interrupt, params ...interface{}) {
 
 // 执行
 // timeout设置 -1 表示不会自动超时
-func (a *async) Run(ctx context.Context, timeout time.Duration) (err error) {
+func (a *Async) Run(ctx context.Context, timeout time.Duration) (err error) {
 	var cancel context.CancelFunc
 	l := len(a.actors)
 	if 0 == l {
