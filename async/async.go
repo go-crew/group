@@ -51,7 +51,7 @@ func (a *Async) Run(ctx context.Context, timeout time.Duration) (err error) {
 		ctx, cancel = context.WithTimeout(ctx, timeout)
 	}
 
-	errCh := make(chan error)
+	errCh := make(chan error, l)
 	for _, act := range a.actors {
 		go func(ctx context.Context, act *actor) {
 			defer func() {
