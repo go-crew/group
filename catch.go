@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-// 处理group触发的panic，并打印
+// CatchPanic 处理group触发的panic，并打印
 func CatchPanic(errInfo interface{}) (err error) {
 	switch errInfo.(type) {
 	case string:

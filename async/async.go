@@ -7,24 +7,24 @@ import (
 )
 
 type (
-	// Go程业务逻辑执行环境
+	// Execute Go程业务逻辑执行环境
 	Execute func(ctx context.Context, params ...interface{}) (err error)
-	// Go程停止后的执行环境回调
+	// Interrupt Go程停止后的执行环境回调
 	Interrupt func(cancel context.CancelFunc, err error)
 )
 
-// 同步业务对象
+// Async 同步业务对象
 type Async struct {
 	actors []*actor
 	length int
 }
 
-// 创建分组对象1
+// NewGroup 创建分组对象1
 func NewGroup() *Async {
 	return &Async{}
 }
 
-// 添加方法
+// Add 添加方法
 func (a *Async) Add(exec Execute, inter Interrupt, params ...interface{}) {
 	actor := &actor{
 		params: params,
@@ -36,7 +36,7 @@ func (a *Async) Add(exec Execute, inter Interrupt, params ...interface{}) {
 	a.length++
 }
 
-// 执行
+// Run 执行
 // timeout设置 -1 表示不会自动超时
 func (a *Async) Run(ctx context.Context, timeout time.Duration) (err error) {
 	var cancel context.CancelFunc
@@ -72,6 +72,7 @@ func (a *Async) Run(ctx context.Context, timeout time.Duration) (err error) {
 		<-errCh
 	}
 
+	defer cancel()
 	return
 }
 

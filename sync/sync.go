@@ -8,13 +8,13 @@ import (
 )
 
 type (
-	// 协程运行时给予的标签
+	// Tag 协程运行时给予的标签
 	Tag string
-	// Go程业务逻辑执行环境
+	// Execute Go程业务逻辑执行环境
 	Execute func(ctx context.Context, task TaskResult, params ...interface{}) TaskResult
 )
 
-// 同步业务对象
+// Sync 同步业务对象
 type Sync struct {
 	tags   []Tag
 	actors []*actor
@@ -23,12 +23,12 @@ type Sync struct {
 
 const tagErrMsg = "tag %s exists"
 
-// 创建分组对象
+// NewGroup 创建分组对象
 func NewGroup() *Sync {
 	return &Sync{}
 }
 
-// 添加方法
+// Add 添加方法
 func (s *Sync) Add(tag Tag, exec Execute, params ...interface{}) error {
 	if exists(s.tags, tag) {
 		errMsg := fmt.Sprintf(tagErrMsg, tag)
@@ -50,7 +50,7 @@ func (s *Sync) Add(tag Tag, exec Execute, params ...interface{}) error {
 	return nil
 }
 
-// 运行
+// Run 运行
 func (s *Sync) Run(ctx context.Context) (mTask map[Tag]*TaskResult) {
 	l := len(s.actors)
 	if 0 == l {
