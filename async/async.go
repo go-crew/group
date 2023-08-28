@@ -62,7 +62,6 @@ func (a *Async) Run(ctx context.Context, timeout time.Duration) (err error) {
 	}
 
 	err = <-errCh
-	
 	// 全局通知
 	for _, act := range a.actors {
 		act.inter(cancel, err)
